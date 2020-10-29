@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-center mb-3">Poll Questions</h1>
+{% if latest_question_list %}
+{% for question in latest_question_list %}
+<div class="card-mb-3">
+    <div class="card-body">
+        <p class="lead">{{ question.question_text }}</p>
+        <!-- <a href="{% url 'polls:detail' question.id %}" class="btn btn-primary btn-sm">Vote Now</a> -->
+        {% if error_message %}
+        <p class="alert alert-danger">
+            <strong>{{ error_message }}</strong>
+        </p>
+        {% endif %}
+
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+            <div class="form-check">
+                <input type="radio" name="choice" class="form-check-input" id="choice{{ forloop.counter }}"
+                    value="{{ choice.id }}" />
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>
+            </div>
+            {% endfor %}
+            <input type="submit" value="Vote" class="btn btn-success btn-lg btn-block mt-4" />
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>No polls available</p>
+{% endif %}
+<div class="row">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  {% if latest_question_list.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{latest_question_list.previous_page_number}}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                  <li class="page-item"><a class="page-link" href="#">{{latest_question_list.number}}</a></li>
+                  {% if latest_question_list.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{latest_question_list.next_page_number}}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+              </nav>
+            </div>
+{% endblock %}
