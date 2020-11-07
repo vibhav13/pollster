@@ -2,13 +2,14 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Question, Choice
 
 # Get questions and display them
 
-
+@login_required()
 def index(request):
     all_post = Paginator(Question.objects.order_by('-pub_date'),3)
     page = request.GET.get('page')
@@ -23,7 +24,7 @@ def index(request):
 
 # Show specific question and choices
 
-
+@login_required()
 def detail(request, question_id):
     try:
         question = Question.objects.get(pk=question_id)
@@ -33,14 +34,14 @@ def detail(request, question_id):
 
 # Get question and display results
 
-
+@login_required()
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
 # Vote for a question choice
 
-
+@login_required()
 def vote(request, question_id):
     # print(request.POST['choice'])
     question = get_object_or_404(Question, pk=question_id)
@@ -58,4 +59,4 @@ def vote(request, question_id):
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        return HttpResponseRedirect(reverse('polls:index'))
