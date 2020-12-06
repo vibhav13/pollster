@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Question, Choice
+from django.contrib.auth.models import User
 
 # Get questions and display them
 
@@ -57,7 +58,15 @@ def vote(request):
               
         #selected_choice = cat.choice_set.get(pk=request.POST[cat.question_text])
             selected_choice.votes += 1
+            current_user = request.user
+            selected_choice.owner = current_user.id
             selected_choice.save()
+
+            # current_vote = get_object_or_404(Vote)  
+            # current_vote.usr_id = current_user.id
+            # current_vote.quest_id = cat.question_id
+            # current_vote.cho_id = selected_choice.choice_id  
+            # current_vote.save()  
     # # print(request.POST['choice'])
     # question = get_object_or_404(Question, pk=question_id)
     # try:
@@ -76,4 +85,4 @@ def vote(request):
     #     # user hits the Back button.
     #return HttpResponseRedirect('polls:index')
     #import pdb; pdb.set_trace()    
-    return HttpResponse("logged outreh45t")
+    return HttpResponse("Thanks for the response.")
